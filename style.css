@@ -1,0 +1,72 @@
+@font-face {
+    font-family: hand-writing;
+    src: url(../fonts/TTF/AbeerDemo.ttf);
+}
+
+* {
+    font-family: hand-writing;
+}
+
+body{
+    background-color: rgb(72, 69, 69);
+}
+
+.container {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    justify-content: center;
+    margin: 30px auto;
+    padding: 30px;
+    width: 50vw;
+    border: 1px solid black;
+    border-radius: 20px;
+    background-color: rgb(135, 135, 135);
+    box-shadow: 0px 0px 20px black ;
+}
+
+.difficulty-wrapper,
+.mark-choise-wrapper{
+    text-align: center;
+}
+
+.mark-choise,
+.difficulty {
+    display: flex;
+    width: 400px;
+    justify-content: space-around;
+    margin: 0px 0px 20px 0px;
+}
+
+.mark-choise button {
+    width: 150px;
+}
+
+.difficulty button {
+    width: 120px;
+}
+
+.gameboard {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    margin: 30px;
+}
+
+.square {
+    font-size: 2rem;
+    border-radius: 0;
+    border: 1px solid black;
+}
+
+button {
+    background-color: rgb(219, 219, 219);
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+button:hover{
+    background-color: rgba(219, 219, 219, 0.784);
+}
