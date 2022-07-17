@@ -42,6 +42,10 @@ body{
     width: 150px;
 }
 
+.x, .easy {
+    border: 3px solid black;
+}
+
 .difficulty button {
     width: 120px;
 }
@@ -59,14 +63,27 @@ body{
     border: 1px solid black;
 }
 
+.square:disabled {
+    color: black;
+}
+
 button {
     background-color: rgb(219, 219, 219);
     font-size: 1.5rem;
     font-weight: bold;
     padding: 10px;
     border-radius: 10px;
+    border: 1px solid black;
+}
+
+button:disabled {
+    color: black;
 }
 
 button:hover{
     background-color: rgba(219, 219, 219, 0.784);
+}
+
+.game-over-message{
+    display: block;
 }
