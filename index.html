@@ -14,11 +14,21 @@
 
     <div class="container">
 
-        <div class="mark-choise-wrapper">
-            <h2>Choose Your Mark</h2>
-            <div class="mark-choise">
-                <button class="x">X</button>
-                <button class="o">O</button>
+        <div class="wrapper">
+            <div class="grid-size-wrapper">
+                <h2>Choose Gameboard Size</h2>
+                <div class="mark-choise">
+                    <button class="s">3 x 3</button>
+                    <button class="l">4 x 4</button>
+                    <button class="xl">5 x 5</button>
+                </div>
+            </div>
+            <div class="mark-choise-wrapper">
+                <h2>Choose Your Mark</h2>
+                <div class="mark-choise">
+                    <button class="x">X</button>
+                    <button class="o">O</button>
+                </div>
             </div>
         </div>
 
@@ -31,20 +41,21 @@
             </div>
         </div>
 
+        <h2 class="game-over-message">PLAYERS TURN</h2>
+
         <div class="gameboard">
-            <button class="square" id="0"></button>
-            <button class="square" id="1"></button>
-            <button class="square" id="2"></button>
-            <button class="square" id="3"></button>
-            <button class="square" id="4"></button>
-            <button class="square" id="5"></button>
-            <button class="square" id="6"></button>
-            <button class="square" id="7"></button>
-            <button class="square" id="8"></button>
+                <button class="square square_hover" id="0"></button>
+                <button class="square square_hover" id="1"></button>
+                <button class="square square_hover" id="2"></button>
+                <button class="square square_hover" id="3"></button>
+                <button class="square square_hover" id="4"></button>
+                <button class="square square_hover" id="5"></button>
+                <button class="square square_hover" id="6"></button>
+                <button class="square square_hover" id="7"></button>
+                <button class="square square_hover" id="8"></button>
         </div>
 
         <div class="game-over">
-            <h2 class="game-over-message"></h2>
             <button class="restart">RESTART</button>
         </div>
 

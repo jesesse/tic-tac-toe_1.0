@@ -7,7 +7,7 @@
     font-family: hand-writing;
 }
 
-body{
+body {
     background-color: rgb(72, 69, 69);
 }
 
@@ -22,12 +22,21 @@ body{
     border: 1px solid black;
     border-radius: 20px;
     background-color: rgb(135, 135, 135);
-    box-shadow: 0px 0px 20px black ;
+    box-shadow: 0px 0px 20px black;
+    gap: 15px;
+}
+
+.wrapper {
+    display: flex;
+    gap: 15px;
 }
 
 .difficulty-wrapper,
-.mark-choise-wrapper{
+.mark-choise-wrapper,
+.grid-size-wrapper,
+.game-over {
     text-align: center;
+    border: 1px solid black;
 }
 
 .mark-choise,
@@ -38,22 +47,25 @@ body{
     margin: 0px 0px 20px 0px;
 }
 
-.mark-choise button {
-    width: 150px;
+.difficulty {
+    width: 500px;
 }
 
-.x, .easy {
+.mark-choise button {
+    width: 100px;
+}
+
+.x, .easy, .s {
     border: 3px solid black;
 }
 
 .difficulty button {
-    width: 120px;
+    width: 130px;
 }
 
 .gameboard {
     display: grid;
-    grid-template-columns: repeat(3, 100px);
-    grid-template-rows: repeat(3, 100px);
+    grid-template-columns: repeat(3, 100px); grid-template-rows: repeat(3, 100px);
     margin: 30px;
 }
 
@@ -80,10 +92,11 @@ button:disabled {
     color: black;
 }
 
-button:hover{
+
+.square_hover:hover {
     background-color: rgba(219, 219, 219, 0.784);
 }
 
-.game-over-message{
+.game-over-message {
     display: block;
 }

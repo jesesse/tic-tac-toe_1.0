@@ -10,18 +10,20 @@ const player = (mark) => {
 }
 
 const aiPlayer = (mark, aiLevel) => {
-
     return {
         mark,
         aiLevel
     }
 }
 
-/*-----------------------------------------------------------------*/
+/*--------------------------------------------------------------------------------*/
+
 
 //Controls the gameboard data
 const gameboardController = (() => {
-    const _gameboard = new Array(9);
+
+    let gameboardSize = 9;
+    const _gameboard = [];
 
     function setMark(squareId, mark) {
         _gameboard[squareId] = mark;
@@ -31,16 +33,24 @@ const gameboardController = (() => {
         return _gameboard[index];
     }
 
+    function setGameboardSize(size) {
+        gameboardSize = size;
+    }
+
+    function getGameboardSize() {
+        return gameboardSize;
+    }
+
     function getFreeSquares() {
         let freeSquares = [];
-        for (let i = 0; i < _gameboard.length; i++) {
+        for (let i = 0; i < gameboardSize; i++) {
             if (_gameboard[i] == undefined) freeSquares.push(_gameboard[i]);
         }
         return freeSquares;
     }
 
     function clearGameboard() {
-        for (i = 0; i < 9; i++) {
+        for (i = 0; i < gameboardSize; i++) {
             _gameboard[i] = undefined;
         }
     }
@@ -49,11 +59,18 @@ const gameboardController = (() => {
         setMark,
         getSquare,
         getFreeSquares,
-        clearGameboard
+        clearGameboard,
+        setGameboardSize,
+        getGameboardSize
     }
 })();
 
+
+
+
+
 /*-----------------------------------------------------------------*/
+
 
 //Controls the game flow and logic
 const gameController = (() => {
@@ -89,6 +106,7 @@ const gameController = (() => {
     }
 
     async function aiMakeMove() {
+        displayController.showGameOverMessage("AI TURN");
 
         if (ai.aiLevel == 'easy') {
             displayController.disableGameboard();
@@ -116,13 +134,15 @@ const gameController = (() => {
             displayController.enableGameboard();
         }
 
+        displayController.showGameOverMessage("PLAYER TURN");
+
         if (checkForWin() || checkForDraw()) gameOver();
     }
 
     function aiMakeRandomMove() {
-        let randomIndex = Math.floor(Math.random() * (9));
+        let randomIndex = Math.floor(Math.random() * (gameboardController.getGameboardSize()));
         while (gameboardController.getSquare(randomIndex)) {
-            randomIndex = Math.floor(Math.random() * (9));
+            randomIndex = Math.floor(Math.random() * (gameboardController.getGameboardSize()));
         }
         gameboardController.setMark(randomIndex, ai.mark);
         displayController.renderMark(randomIndex, ai.mark);
@@ -133,7 +153,7 @@ const gameController = (() => {
         let score;
         let bestScore = +Infinity;
 
-        for (let i = 0; i < 9; i++) {
+        for (let i = 0; i < gameboardController.getGameboardSize(); i++) {
             if (!(gameboardController.getSquare(i) == undefined)) continue;
             gameboardController.setMark(i, ai.mark)
             score = minimax(true);
@@ -163,7 +183,7 @@ const gameController = (() => {
 
         if (isMaximisingPlayer) {
             let bestScore = -Infinity;
-            for (let i = 0; i < 9; i++) {
+            for (let i = 0; i < gameboardController.getGameboardSize(); i++) {
                 if (!(gameboardController.getSquare(i) == undefined)) continue;
                 gameboardController.setMark(i, player1.mark)
                 let score = minimax(false);
@@ -173,9 +193,11 @@ const gameController = (() => {
 
             return bestScore;
 
-        } else {
+        } 
+
+        if (!isMaximisingPlayer){
             let bestScore = +Infinity;
-            for (let i = 0; i < 9; i++) {
+            for (let i = 0; i < gameboardController.getGameboardSize(); i++) {
 
                 if (!(gameboardController.getSquare(i) == undefined)) continue;
 
@@ -199,9 +221,9 @@ const gameController = (() => {
     }
 
     function checkForRows() {
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < Math.sqrt(gameboardController.getGameboardSize()); i++) {
             let row = [];
-            for (let j = i * 3; j < i * 3 + 3; j++) {
+            for (let j = i * Math.sqrt(gameboardController.getGameboardSize()); j < i * Math.sqrt(gameboardController.getGameboardSize()) + Math.sqrt(gameboardController.getGameboardSize()); j++) {
                 row.push(gameboardController.getSquare(j));
             }
             if (row.every(square => square == 'X')) return "X wins";
@@ -211,10 +233,10 @@ const gameController = (() => {
     }
 
     function checkForColumns() {
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < Math.sqrt(gameboardController.getGameboardSize()); i++) {
             let column = [];
-            for (let j = 0; j < 3; j++) {
-                column.push(gameboardController.getSquare(i + 3 * j));
+            for (let j = 0; j < Math.sqrt(gameboardController.getGameboardSize()); j++) {
+                column.push(gameboardController.getSquare(i + Math.sqrt(gameboardController.getGameboardSize()) * j));
             }
             if (column.every(square => square == 'X')) return "X wins";
             if (column.every(square => square == 'O')) return "O wins";
@@ -224,43 +246,96 @@ const gameController = (() => {
 
     function checkForDiagonals() {
 
-        let diagonal1 = [];
-        diagonal1.push(gameboardController.getSquare(0));
-        diagonal1.push(gameboardController.getSquare(4));
-        diagonal1.push(gameboardController.getSquare(8));
+        if (gameboardController.getGameboardSize() == 25) {
+            
+            let diagonal1 = [];
+            diagonal1.push(gameboardController.getSquare(0));
+            diagonal1.push(gameboardController.getSquare(6));
+            diagonal1.push(gameboardController.getSquare(12));
+            diagonal1.push(gameboardController.getSquare(18));
+            diagonal1.push(gameboardController.getSquare(24));
 
-        if (diagonal1.every(square => square == 'X')) return "X wins";
-        if (diagonal1.every(square => square == 'O')) return "O wins";
+            if (diagonal1.every(square => square == 'X')) return "X wins";
+            if (diagonal1.every(square => square == 'O')) return "O wins";
 
-        let diagonal2 = [];
-        diagonal2.push(gameboardController.getSquare(2));
-        diagonal2.push(gameboardController.getSquare(4));
-        diagonal2.push(gameboardController.getSquare(6));
+            let diagonal2 = [];
+            diagonal2.push(gameboardController.getSquare(4));
+            diagonal2.push(gameboardController.getSquare(8));
+            diagonal2.push(gameboardController.getSquare(12));
+            diagonal2.push(gameboardController.getSquare(16));
+            diagonal2.push(gameboardController.getSquare(20));
 
-        if (diagonal2.every(square => square == 'X')) return "X wins";
-        if (diagonal2.every(square => square == 'O')) return "O wins";
+            if (diagonal2.every(square => square == 'X')) return "X wins";
+            if (diagonal2.every(square => square == 'O')) return "O wins";
 
-        return false;
+            return false;
+        }
+
+        if (gameboardController.getGameboardSize() == 16) {
+
+            let diagonal1 = [];
+            diagonal1.push(gameboardController.getSquare(0));
+            diagonal1.push(gameboardController.getSquare(5));
+            diagonal1.push(gameboardController.getSquare(10));
+            diagonal1.push(gameboardController.getSquare(15));
+
+            if (diagonal1.every(square => square == 'X')) return "X wins";
+            if (diagonal1.every(square => square == 'O')) return "O wins";
+
+            let diagonal2 = [];
+            diagonal2.push(gameboardController.getSquare(3));
+            diagonal2.push(gameboardController.getSquare(6));
+            diagonal2.push(gameboardController.getSquare(9));
+            diagonal2.push(gameboardController.getSquare(12));
+
+            if (diagonal2.every(square => square == 'X')) return "X wins";
+            if (diagonal2.every(square => square == 'O')) return "O wins";
+
+            return false;
+        }
+        if (gameboardController.getGameboardSize() == 9) {
+            
+            let diagonal1 = [];
+            diagonal1.push(gameboardController.getSquare(0));
+            diagonal1.push(gameboardController.getSquare(4));
+            diagonal1.push(gameboardController.getSquare(8));
+    
+            if (diagonal1.every(square => square == 'X')) return "X wins";
+            if (diagonal1.every(square => square == 'O')) return "O wins";
+    
+            let diagonal2 = [];
+            diagonal2.push(gameboardController.getSquare(2));
+            diagonal2.push(gameboardController.getSquare(4));
+            diagonal2.push(gameboardController.getSquare(6));
+    
+            if (diagonal2.every(square => square == 'X')) return "X wins";
+            if (diagonal2.every(square => square == 'O')) return "O wins";
+    
+            return false;
+        }
+
+        
     }
-
 
     function checkForDraw() {
         if (checkForWin()) return false;
-        if (gameboardController.getFreeSquares().length == 0) return "it's a tie";
+        if (gameboardController.getFreeSquares().length == 0) return "It's a tie";
         return false;
     }
 
     function gameOver() {
         displayController.disableGameboard();
-        if(checkForWin()) displayController.showGameOverMessage(checkForWin());
+        if (checkForWin()) displayController.showGameOverMessage(checkForWin());
         else displayController.showGameOverMessage(checkForDraw());
     }
 
     function restart() {
         gameboardController.clearGameboard();
         displayController.clearGameboard();
+        displayController.createGameboard();
         displayController.enableGameboard();
         displayController.clearGameOverMessage();
+        displayController.showGameOverMessage("PLAYER TURN");
         if (player1.mark == 'O') aiMakeMove();
     }
 
@@ -273,18 +348,51 @@ const gameController = (() => {
 })();
 
 
-/*--------------------------------------------------------------*/
+
+
+
+/*--------------------------------------------------------------------------------*/
 
 //Controls the graphical UI
 const displayController = (() => {
+    const small = document.querySelector('.s');
+    const big = document.querySelector('.l');
+    const xlarge = document.querySelector('.xl');
     const buttonX = document.querySelector('.x');
     const buttonO = document.querySelector('.o');
     const easy = document.querySelector('.easy');
     const normal = document.querySelector('.normal');
     const hard = document.querySelector('.hard');
     const restart = document.querySelector('.restart');
-    const squares = document.querySelectorAll('.square');
     const gameOverMessage = document.querySelector('.game-over-message');
+    const gameboard = document.querySelector('.gameboard');
+
+    small.addEventListener('click', (e) => {
+        gameboard.style = 'grid-template-columns: repeat(3, 100px); grid-template-rows: repeat(3, 100px);'
+        e.target.style = 'border: 3px solid black;';
+        big.style = 'border: 1px solid black;';
+        xlarge.style = 'border: 1px solid black;';
+        gameboardController.setGameboardSize(9);
+        gameController.restart();
+    });
+
+    big.addEventListener('click', (e) => {
+        gameboard.style = 'grid-template-columns: repeat(4, 90px); grid-template-rows: repeat(4, 90px);'
+        e.target.style = 'border: 3px solid black;';
+        small.style = 'border: 1px solid black;';
+        xlarge.style = 'border: 1px solid black;';
+        gameboardController.setGameboardSize(16);
+        gameController.restart();
+    });
+
+    xlarge.addEventListener('click', (e) => {
+        gameboard.style = 'grid-template-columns: repeat(5, 80px); grid-template-rows: repeat(5, 80px);'
+        e.target.style = 'border: 3px solid black;';
+        small.style = 'border: 1px solid black;';
+        big.style = 'border: 1px solid black;';
+        gameboardController.setGameboardSize(25);
+        gameController.restart();
+    });
 
     buttonX.addEventListener('click', (e) => {
         gameController.assignPlayerMark(e.target.textContent);
@@ -323,24 +431,35 @@ const displayController = (() => {
         gameController.restart();
     })
 
+    const squares = document.querySelectorAll('.square');
+    squares.forEach((square) => square.addEventListener("click", gameController.playerMakeMove))
 
-    squares.forEach(square => {
-        square.addEventListener('click', gameController.playerMakeMove)
-    })
+
+    function createGameboard() {
+        for (let i = 0; i < gameboardController.getGameboardSize(); i++) {
+            const square = document.createElement('button');
+            square.classList.add('square');
+            square.setAttribute('id', i);
+            square.addEventListener('click', gameController.playerMakeMove)
+            gameboard.appendChild(square);
+        }
+    }
 
     function disableGameboard() {
-        for (let i = 0; i < 9; i++) {
+        for (let i = 0; i < gameboardController.getGameboardSize(); i++) {
             document.getElementById(i).disabled = true;
+            document.getElementById(i).classList.toggle('square_hover')
         }
     }
 
     function enableGameboard() {
-        for (let i = 0; i < 9; i++) {
+        for (let i = 0; i < gameboardController.getGameboardSize(); i++) {
             document.getElementById(i).disabled = false;
+            document.getElementById(i).classList.toggle('square_hover')
         }
     }
 
-    restart.addEventListener('click', gameController.restart)
+    restart.addEventListener('click', () => gameController.restart())
 
     function renderMark(id, mark) {
         let square = document.getElementById(id);
@@ -356,12 +475,8 @@ const displayController = (() => {
     }
 
     function clearGameboard() {
-        squares.forEach(square => {
-            square.textContent = '';
-        })
+        while (gameboard.lastChild) gameboard.removeChild(gameboard.lastChild);
     }
-
-
 
     return {
         renderMark,
@@ -369,11 +484,8 @@ const displayController = (() => {
         disableGameboard,
         enableGameboard,
         showGameOverMessage,
-        clearGameOverMessage
+        clearGameOverMessage,
+        createGameboard
     }
 
-
 })();
-
-
-
